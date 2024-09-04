@@ -1,3 +1,6 @@
+WINDOW_WIDTH = 1024
+WINDOW_HEIGHT = 1024
+
 
 def load_png(name):
     """Load image and return image object"""
