@@ -2,16 +2,17 @@ import pygame
 from utils import WINDOW_HEIGHT, WINDOW_WIDTH
 from rocket import Rocket
 class Ship(pygame.sprite.Sprite):
-    def __init__(self, groups):
-        pygame.sprite.Sprite.__init__(self, groups)
+    def __init__(self, all_sprites, enemy_sprites):
+        pygame.sprite.Sprite.__init__(self, all_sprites)
         self.image = pygame.image.load('assets/Foozle_2DS0011_Void_MainShip/Main Ship/Main Ship - Bases/PNGs/Main Ship - Base - Full health.png').convert_alpha()
         # Fetch the rectangle object that has the dimensions of the image
         # Can update the position of this object by setting the values of rect.x and rect.y
         self.rect = self.image.get_frect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
         self.speed = 100
         self.direction = pygame.math.Vector2(0, 0)
-        self._all_sprites = groups
-
+        self._all_sprites = all_sprites 
+        self.enemy_group = enemy_sprites
+        
         # Rockets
         self._rocket_surf = pygame.image.load('assets/Foozle_2DS0011_Void_MainShip/Main ship weapons/PNGs/Main ship weapon - Projectile - Rocket.png').convert_alpha()
     
@@ -20,6 +21,11 @@ class Ship(pygame.sprite.Sprite):
         self._laser_shoot_time = 0
         self._cooldown_duration = 400 # in milliseconds
 
+        # Mask
+        self.mask = pygame.mask.from_surface(self.image)
+        self.mask_surf = self.mask.to_surface()
+        # To make an object flash: mask_surf.set_colorkey((0, 0, 0))
+        
     def update(self, dt):
         keys = pygame.key.get_pressed()
 
@@ -31,7 +37,7 @@ class Ship(pygame.sprite.Sprite):
 
         recent = pygame.key.get_just_pressed()
         if recent[pygame.K_SPACE] and self._can_shoot:
-            Rocket(self._rocket_surf, self.rect.midtop, self._all_sprites)
+            Rocket(self._rocket_surf, self.rect.midtop, self.enemy_group, self._all_sprites)
             self._can_shoot = False
             self._laser_shoot_time = pygame.time.get_ticks()
             

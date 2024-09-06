@@ -11,8 +11,12 @@ class EnemyShip(pygame.sprite.Sprite):
         # Where the ship will stop moving
         self._y_stop = 100
 
+        # Mask
+        self.mask = pygame.mask.from_surface(self.image)
+
     def update(self, dt):
         self.rect.centery += self.speed * dt
         # If the enemy flies off the screen, kill it
         if self.rect.top >= WINDOW_HEIGHT:
+            
             self.kill()
